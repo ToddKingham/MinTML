@@ -1,24 +1,24 @@
-# mintml
+# MinTML
 
-A minimal, HTML-first JavaScript library. **mintml** extends standard HTML instead of replacing it — routing, templating, and role-based visibility that get out of the way. Remove `new MinTML()` from your page and everything (links, forms, layout) should still just work.
+A minimal, HTML-first JavaScript library. **MinTML** extends standard HTML instead of replacing it — routing, templating, and role-based visibility that get out of the way. Remove `new MinTML()` from your page and everything (links, forms, layout) should still just work.
 
 No build step, no config, no virtual DOM. Just HTML with a few `data-*` attributes and a small script tag.
 
 ## Install
 
 ```bash
-npm install mintml
+npm install @toddkingham/mintml
 ```
 
 ```js
-import MinTML from 'mintml';
+import MinTML from '@toddkingham/mintml';
 ```
 
 ### Or via CDN (no install needed)
 
 ```html
 <script type="module">
-  import MinTML from 'https://cdn.jsdelivr.net/npm/mintml/public/nilla.js';
+  import MinTML from 'https://cdn.jsdelivr.net/npm/@toddkingham/mintml/public/mintml.js';
 </script>
 ```
 
@@ -38,7 +38,7 @@ import MinTML from 'mintml';
 </main>
 
 <script type="module">
-  import MinTML from 'mintml';
+  import MinTML from '@toddkingham/mintml';
   const app = new MinTML();
 </script>
 ```
@@ -90,7 +90,7 @@ Every `[data-page]` section is a "page." Hash links (`#about`) toggle which one 
 
 ## Philosophy
 
-HTML is the foundation, not an afterthought. A mintml page should degrade gracefully — if you delete the script tag, you still have a working, semantic HTML document. The library adds behavior on top of markup you'd write anyway; it doesn't ask you to learn a templating DSL, run a bundler, or restructure your project around it.
+HTML is the foundation, not an afterthought. A MinTML page should degrade gracefully — if you delete the script tag, you still have a working, semantic HTML document. The library adds behavior on top of markup you'd write anyway; it doesn't ask you to learn a templating DSL, run a bundler, or restructure your project around it.
 
 ## License
 

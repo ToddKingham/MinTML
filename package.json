@@ -1,13 +1,13 @@
 {
-  "name": "mintml",
-  "version": "0.1.0",
-  "description": "A tiny, HTML-first JavaScript library that extends standard HTML instead of replacing it — routing, templating, and role-based visibility that get out of the way. Remove `new Nilla()` and your page still works.",
+  "name": "@toddkingham/mintml",
+  "version": "0.1.1",
+  "description": "A minimal, HTML-first JavaScript library that extends standard HTML instead of replacing it — routing, templating, and role-based visibility that get out of the way. Remove `new MinTML()` and your page still works.",
   "type": "module",
-  "main": "public/nilla.js",
-  "module": "public/nilla.js",
-  "exports": "./public/nilla.js",
+  "main": "public/mintml.js",
+  "module": "public/mintml.js",
+  "exports": "./public/mintml.js",
   "files": [
-    "public/nilla.js"
+    "public/mintml.js"
   ],
   "keywords": [
     "html",
@@ -22,12 +22,15 @@
   ],
   "author": "Todd Kingham",
   "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ToddKingham/nilla.git"
+    "url": "git+https://github.com/ToddKingham/MinTML.git"
   },
-  "homepage": "https://github.com/ToddKingham/nilla#readme",
+  "homepage": "https://github.com/ToddKingham/MinTML#readme",
   "bugs": {
-    "url": "https://github.com/ToddKingham/nilla/issues"
+    "url": "https://github.com/ToddKingham/MinTML/issues"
   }
 }
