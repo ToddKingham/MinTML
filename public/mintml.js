@@ -99,11 +99,12 @@ export default class MinTML{
             </section>`);
         }
 
-        if($$(DATA_PAGE).length && !$(ACTIVE_PAGE)){
-            $(DATA_PAGE).dataset.page  = 'active';
-            this.defaultPageId = `#${$(ACTIVE_PAGE).id}`;
+        this.defaultPage = activePage;
+        if(!this.defaultPage){
+            this.defaultPage = firstPage;
+            this.defaultPage.dataset.page = 'active';
         }
-
+        
         // set up change listner
         window.addEventListener('hashchange', this.#processRoute.bind(this));
         this.#processRoute();
@@ -111,15 +112,15 @@ export default class MinTML{
     
     #processRoute(){
         // if(!await this.preflight(location.hash.replace('#',''))) return;
-        const nextRoute = location.hash.length ? location.hash : this.defaultPageId;
+        const nextRoute = location.hash.length ? location.hash : `#${this.defaultPage.id}`;
 
-        // toggle active to previous and new route to active
+        // // toggle active to previous and new route to active
         ($('[data-page=previous]')||{dataset:{page:""}}).dataset.page='';
         ($('[data-page=active]')||{dataset:{page:""}}).dataset.page='previous';
-        $$('[data-page=active]').forEach(page=>page.dataset.page="");
+        // $$('[data-page=active]').forEach(page=>page.dataset.page="");
         try{$(nextRoute).dataset.page="active";}
         
-        // throw to 404 page if route isn't valid
+        // // throw to 404 page if route isn't valid
         catch(e){$id(this.errorPageId).dataset.page="active";}
     }
 

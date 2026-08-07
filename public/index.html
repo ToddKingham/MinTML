@@ -3,65 +3,72 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MinTML Example</title>
+    <title>MinTML Sample App</title>
+
+    <style>
+        header {
+            height: 5rem;
+            background-color: lightblue;
+            display: flex;
+            justify-content: flex-end;
+            gap: .8em;
+        }
+
+        header > nav {
+            margin: 1em;
+        }
+
+        header > nav > a {
+            margin-left: 1em;
+        }
+
+        section[data-page=active]{
+            display: flex;
+            flex-direction: column;
+            margin: 1em;
+        }
+    </style>
+   
     <script type="module">
-        import MinTML from './mintml.min.js';
+       import MinTML from './mintml.js';
+       const app = new MinTML({roles:['guest', 'user']});
 
-        const app = new MinTML();
-
-        app.before('test', ({element, payload})=>{
-            console.log('preflight', element.dataset);
-            foo.innerHTML = app.render('myTemplate', {name: payload.firstName});
-            return false;
-        });
+       function preflightHandler(){
+        console.log('hello');
+       }
 
     </script>
+
 </head>
 <body>
 
-<header>
-    <nav>
-        <a href="#">Home</a>
-        <a href="#about">About Us</a>
-        <a href="#contact">Contact Us</a>
-        <a href="#login">Logout</a>
-    </nav>
-</header>
 
-<main>
-    <section id="home" data-page>
-        <a href="#">Click</a>
-        <form action="#" data-before="test">
-            <input type="text" name="firstName">
-            <input type="checkbox" name="fruit" value="apple">apple
-            <input type="checkbox" name="fruit" value="banana">banana
-            <input type="checkbox" name="fruit" value="grape">grape
-            <button>press</button>
-        </form>
+    <header>
+        <nav>
+            <a href="#home">Home</a>
+            <a href="#about">About Us</a>
+            <a href="#contact">Contact Us</a>
+            <a href="#login" data-listen="logout">Log Out</a>
+        </nav>
+    </header>
 
-        <section id="foo">
-    <template id="myTemplate">
-        Hello {{name}}
+
+    <main>
+        <section id="login" data-page>
+            <h1>Login Screen</h1>
+            <form action="#home">
+                <button>Submit</button>
+            </form>
+        </section>
+        <section id="home" data-page="active">home</section>
+        <section id="about" data-page>about</section>
+        <section id="contact" data-page>contact</section>
+    </main>
+
+
+    <template id="foo">
+        <div>{{name}}</div>
     </template>
-</section>
-
-    </section>
-
-
-    <section id="about" data-page>
-    About Us
-    </section>
-
-
-    <section id="contact" data-page>
-        Contact Us
-    </section>
-
-</main>
-
-<footer>Footer </footer>
-
-
-
+    
 </body>
 </html>
