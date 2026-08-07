@@ -1,0 +1,33 @@
+{
+  "name": "mintml",
+  "version": "0.1.0",
+  "description": "A tiny, HTML-first JavaScript library that extends standard HTML instead of replacing it — routing, templating, and role-based visibility that get out of the way. Remove `new Nilla()` and your page still works.",
+  "type": "module",
+  "main": "public/nilla.js",
+  "module": "public/nilla.js",
+  "exports": "./public/nilla.js",
+  "files": [
+    "public/nilla.js"
+  ],
+  "keywords": [
+    "html",
+    "html-first",
+    "vanilla-js",
+    "progressive-enhancement",
+    "router",
+    "spa",
+    "templating",
+    "no-build",
+    "standards"
+  ],
+  "author": "Todd Kingham",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ToddKingham/nilla.git"
+  },
+  "homepage": "https://github.com/ToddKingham/nilla#readme",
+  "bugs": {
+    "url": "https://github.com/ToddKingham/nilla/issues"
+  }
+}

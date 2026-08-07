@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MinTML Example</title>
+    <script type="module">
+        import MinTML from './mintml.js';
+
+        const app = new MinTML();
+
+        app.before('test', ({element, payload})=>{
+            console.log('preflight', element.dataset);
+            foo.innerHTML = app.render('myTemplate', {name: payload.firstName});
+            return false;
+        });
+
+    </script>
+</head>
+<body>
+
+<header>
+    <nav>
+        <a href="#">Home</a>
+        <a href="#about">About Us</a>
+        <a href="#contact">Contact Us</a>
+        <a href="#login">Logout</a>
+    </nav>
+</header>
+
+<main>
+    <section id="home" data-page>
+        <a href="#">Click</a>
+        <form action="#">
+            <input type="text" name="firstName">
+            <input type="checkbox" name="fruit" value="apple">apple
+            <input type="checkbox" name="fruit" value="banana">banana
+            <input type="checkbox" name="fruit" value="grape">grape
+            <button>press</button>
+        </form>
+    </section>
+
+
+    <section id="about" data-page>
+    About Us
+    </section>
+
+
+    <section id="contact" data-page>
+        Contact Us
+    </section>
+
+</main>
+
+<footer>Footer </footer>
+
+
+
+</body>
+</html>
