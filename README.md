@@ -1,6 +1,6 @@
 # mintml
 
-A tiny, HTML-first JavaScript library. **mintml** extends standard HTML instead of replacing it — routing, templating, and role-based visibility that get out of the way. Remove `new MinTML()` from your page and everything (links, forms, layout) should still just work.
+A minimal, HTML-first JavaScript library. **mintml** extends standard HTML instead of replacing it — routing, templating, and role-based visibility that get out of the way. Remove `new MinTML()` from your page and everything (links, forms, layout) should still just work.
 
 No build step, no config, no virtual DOM. Just HTML with a few `data-*` attributes and a small script tag.
 
