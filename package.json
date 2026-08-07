@@ -6,9 +6,19 @@
   "main": "public/mintml.js",
   "module": "public/mintml.js",
   "exports": "./public/mintml.js",
+  "unpkg": "public/mintml.min.js",
+  "jsdelivr": "public/mintml.min.js",
   "files": [
-    "public/mintml.js"
+    "public/mintml.js",
+    "public/mintml.min.js"
   ],
+  "scripts": {
+    "build": "esbuild public/mintml.js --minify --format=esm --outfile=public/mintml.min.js",
+    "prepublishOnly": "npm run build"
+  },
+  "devDependencies": {
+    "esbuild": "^0.28.1"
+  },
   "keywords": [
     "html",
     "html-first",

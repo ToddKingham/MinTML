@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MinTML Example</title>
     <script type="module">
-        import MinTML from './mintml.js';
+        import MinTML from './mintml.min.js';
 
         const app = new MinTML();
 
@@ -31,13 +31,20 @@
 <main>
     <section id="home" data-page>
         <a href="#">Click</a>
-        <form action="#">
+        <form action="#" data-before="test">
             <input type="text" name="firstName">
             <input type="checkbox" name="fruit" value="apple">apple
             <input type="checkbox" name="fruit" value="banana">banana
             <input type="checkbox" name="fruit" value="grape">grape
             <button>press</button>
         </form>
+
+        <section id="foo">
+    <template id="myTemplate">
+        Hello {{name}}
+    </template>
+</section>
+
     </section>
 
 

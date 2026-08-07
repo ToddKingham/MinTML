@@ -2,7 +2,7 @@
 
 A minimal, HTML-first JavaScript library. **MinTML** extends standard HTML instead of replacing it — routing, templating, and role-based visibility that get out of the way. Remove `new MinTML()` from your page and everything (links, forms, layout) should still just work.
 
-No build step, no config, no virtual DOM. Just HTML with a few `data-*` attributes and a small script tag.
+No build step required to *use* it, no config, no virtual DOM. Just HTML with a few `data-*` attributes and a small script tag.
 
 ## Install
 
@@ -19,6 +19,14 @@ import MinTML from '@toddkingham/mintml';
 ```html
 <script type="module">
   import MinTML from 'https://cdn.jsdelivr.net/npm/@toddkingham/mintml/public/mintml.js';
+</script>
+```
+
+A minified build is also published at `public/mintml.min.js` (about 4.4kB, ~1.9kB gzipped) — swap the path above for `public/mintml.min.js` in production if you want the smaller payload:
+
+```html
+<script type="module">
+  import MinTML from 'https://cdn.jsdelivr.net/npm/@toddkingham/mintml/public/mintml.min.js';
 </script>
 ```
 
@@ -91,6 +99,15 @@ Every `[data-page]` section is a "page." Hash links (`#about`) toggle which one 
 ## Philosophy
 
 HTML is the foundation, not an afterthought. A MinTML page should degrade gracefully — if you delete the script tag, you still have a working, semantic HTML document. The library adds behavior on top of markup you'd write anyway; it doesn't ask you to learn a templating DSL, run a bundler, or restructure your project around it.
+
+## Development
+
+```bash
+npm install       # installs esbuild, used only to produce the minified build
+npm run build     # regenerates public/mintml.min.js from public/mintml.js
+```
+
+The minified build regenerates automatically before every `npm publish` (via `prepublishOnly`), so you never have to remember to run it by hand.
 
 ## License
 
