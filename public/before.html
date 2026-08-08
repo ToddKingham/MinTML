@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <style>
+    
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+        form {
+            width: 300px;
+        }
+        label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+        form > footer {
+            display: flex;
+            justify-content: flex-end;
+            align-items:last baseline;
+        }
+
+        input {
+            padding: 4px;
+        }
+
+        button {
+            padding: 5px 20px;
+            border: 1px solid gray;
+            border-radius: 5px;
+            background-color: rgb(105, 150, 82);
+            margin-left: 10px;
+            cursor: pointer;
+        }
+
+        #forgotpw {
+            font-size: small;
+        }
+    </style>
+
+    <script type="module">
+        import MinTML from './mintml.js';
+        const app = new MinTML();
+
+        app.before("forgotPassword", (obj)=>{    
+            alert('if you set this return to "true" I will navigate to the href');
+            // return false prevents the event
+            return false;
+        });
+
+
+        /* you don't need to "navigate" to another screen. Just return 
+        true and let the form's action do what it was designed to do */ 
+        app.before("doLogin", ({payload})=>{
+            // validate the form
+            if( payload.user.trim() === '' || payload.password.trim() === ''){
+                alert('Username and Password are required!');
+                return false;
+            }
+            // proceed to the form action
+            return true;
+
+        });
+    </script>
+</head>
+<body>
+
+    <form action="#dashboard" data-before="doLogin">
+        <label>
+            User Name:
+            <input type="text" name="user">
+        </label>
+        <label>
+            password:
+            <input type="password" name="password">
+        </label>
+        <footer>
+            <a id="forgotpw" href="#forgot" data-before="forgotPassword">forgot password</a>
+            <button>Login</button>
+        </footer>
+    </form>
+
+</body>
+</html>

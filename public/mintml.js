@@ -6,16 +6,12 @@ const CSS = `
     main { flex: 1; min-height: 0; display: flex; flex-direction: column;}
     [data-page] { display: none; }
     [data-page=active] { display: flex; flex: 1; overflow: auto; }
-    [data-page=active]#err_404 {
+    [data-page=active]#mintml-404 {
         background-color:white; position: absolute; width: 100vw; height: 100vh; margin: 0px; top: 0px; left: 0px; display: flex; align-items: center; justify-content: center; font-size: 40px;
     }
     [data-code] {margin-right: 10px; padding-right: 10px; border-right: 2px solid black;}
     .mintml-lib-hidden { display: none !important; }
 `;
-
-export const $ = q=>document.querySelector(q);
-export const $$ = q=>[...document.querySelectorAll(q)];
-export const $id = id=>document.getElementById(id);
 
 const DATA_PAGE = '[data-page]';
 const ACTIVE_PAGE = '[data-page=active]';
@@ -24,69 +20,92 @@ const CSS_ID = 'mintml-app-css';
 
 
 export default class MinTML{
-    defaultPage = "";
-    errorPageId = "";
+    #preflightHandler = ()=>true;
+    #defaultPageId = "";
+    #errorPageId = "";
     #beforeListeners = {};
     #currentRole;
     #showRoles = {};
     #roles;
+    #templates = {};
+    
+    constructor({roles=[], errorPageId='mintml-404'}={}){
+        // parse config object passed in
+        this.#errorPageId = errorPageId;
+        this.roles = roles;
+        
+        this.#initCSS();
+        this.#initNavigation();
+        this.#initPages(errorPageId);
+        this.#initTemplates();
+    }
 
-    constructor({roles=[], preflightHandler=async ()=>true, errorPageId='err_404'}={}){
-        // ADD THE CSS STYLE TO THE DOM
+    #initCSS(){
         if(!document.getElementById(CSS_ID)){
             const style = document.createElement('style');
             style.id = CSS_ID
             style.textContent = CSS;
             document.head.insertBefore(style, document.head.querySelector('link, style, script'));
         }
-    
-        // parse config object passed in
-        this.errorPageId = errorPageId;
-        this.roles = roles;
-        this.render = Template.render.bind(Template);
-        Template.remove();
+    }
 
+    #initNavigation(){
         const beforeListenerContract = {
             element: null, 
             payload: null,
             params: null
         }
-        
-        // set up <a> BEFORE listeners
-        document.addEventListener("click", (async e => {
-            const link = e.target.closest(`a${DATA_BEFORE}`);
-            if (!link) return;
 
-            e.preventDefault();       
-            const route = link.hash?.replace('#','');
-            const data = Object.assign({}, beforeListenerContract, {element: link, params: queryStringParams(link.hash)});
-            const fn = this.#beforeListeners[link.dataset.before] || (()=>true);
-            if(await fn(data)){
-                if(route){
-                    this.navigate(route);
+        const navigationHandler = async ({e, element, route, data})=>{
+            e.preventDefault(); 
+            
+            const beforeHandler = this.#beforeListeners[element.dataset.before] || (()=>true);
+
+            // run the preflight check
+            if(await this.#preflightHandler(data)){
+                // if preflight passes do we need to run the "before" check?
+                if(e.target.closest(`${DATA_BEFORE}`)){
+                    // run the "before" check
+                    if(await beforeHandler(data)){
+                        if(route){
+                            this.navigate(route);
+                        }
+                    }
+                }
+                else {
+                    if(route){
+                        this.navigate(route);
+                    }
                 }
             }
+             
+        }
+        
+        document.addEventListener("click", (async e => {
+            const element = e.target.closest(`a[href^="#"]`);
+            if (!element) return;
+
+            const route = element.hash?.replace('#','');
+            const data = Object.assign({}, beforeListenerContract, {element, params: queryStringParams(element.hash)});
+            await navigationHandler({e, element, route, data});
         }).bind(this));
 
-
-        // set up <form> BEFORE listeners
         document.addEventListener('submit', (async e=>{
-            const form = e.target.closest(`form${DATA_BEFORE}`);
-            if (!form) return;
+            const element = e.target.closest(`form`);
+            if (!element) return;
 
-            e.preventDefault();
-            const route = form.action.split('#')[1];
-            const data = Object.assign({}, beforeListenerContract, {element: form, payload: form2Object(form), params: queryStringParams(form.action)});
-            const fn = this.#beforeListeners[form.dataset.before] || (()=>true);
-            if(await fn(data)){
-                this.navigate(route);
-            }
+            const route = element.action.split('#')[1];
+            const data = Object.assign({}, beforeListenerContract, {element, payload: form2Object(element), params: queryStringParams(element.action)});
+            await navigationHandler({e, element, route, data});    
         }).bind(this));
+    }
 
+    #initPages(){
         // ensure there is an "active" data-page
         const firstPage = $(DATA_PAGE);
         const activePage = $(ACTIVE_PAGE);
-        const errorPage = $id(this.errorPageId);
+        const errorPage = $id(this.#errorPageId);
+        const defaultPage = activePage || firstPage;
 
         // if there are no pages... stop processing
         if(!firstPage) return;
@@ -94,25 +113,41 @@ export default class MinTML{
         // create a 404 page if needed
         if(!errorPage){
             $('*:has(> section[data-page])').insertAdjacentHTML('beforeend', `
-            <section id="err_404" data-page>
+            <section id="mintml-404" data-page>
                 <span data-code>404</span> <span data-message>Page Not Found</span>
             </section>`);
         }
 
-        this.defaultPage = activePage;
-        if(!this.defaultPage){
-            this.defaultPage = firstPage;
-            this.defaultPage.dataset.page = 'active';
-        }
+        // set the default page flag just incase it's not hardcoded
+        console.log(defaultPage);
+        defaultPage.dataset.page = "active";
+        this.#defaultPageId = defaultPage.id;
+       
         
         // set up change listner
         window.addEventListener('hashchange', this.#processRoute.bind(this));
         this.#processRoute();
     }
+
+    #initTemplates(){
+        this.#templates = Object.fromEntries(Array.from($$('template')).map(t=>[t.id, t]));
+        Object.values(this.templates).forEach(t=>t.remove());
+    }
+
+    #roleManager(){
+        if(!this.roles.length) return;
+
+         // hide all elements with a data-show attribute
+        $$('[data-show]').forEach(el=>el.classList.add('mintml-lib-hidden'))
+        
+        // then remove the ones that match the users's current role
+        this.#showRoles[this.#currentRole]?.forEach(el=>{
+            el.classList.remove('mintml-lib-hidden');
+        })
+    }
     
-    #processRoute(){
-        // if(!await this.preflight(location.hash.replace('#',''))) return;
-        const nextRoute = location.hash.length ? location.hash : `#${this.defaultPage.id}`;
+    async #processRoute(){
+        const nextRoute = location.hash.length ? location.hash : `#${this.#defaultPageId}`;
 
         // // toggle active to previous and new route to active
         ($('[data-page=previous]')||{dataset:{page:""}}).dataset.page='';
@@ -121,7 +156,7 @@ export default class MinTML{
         try{$(nextRoute).dataset.page="active";}
         
         // // throw to 404 page if route isn't valid
-        catch(e){$id(this.errorPageId).dataset.page="active";}
+        catch(e){$id(this.#errorPageId).dataset.page="active";}
     }
 
     navigate(id){
@@ -137,13 +172,16 @@ export default class MinTML{
         return this;
     }
 
-    // off(query){
-    //     delete this.#beforeListeners[query];
-    // }
+    preflight(fn){
+        this.#preflightHandler = fn;
+    }
 
-    // fire(query, args={}){
-    //     return this.#beforeListeners[query](args);
-    // }
+    render(str, data={}){
+        if (str instanceof HTMLTemplateElement) str = str.innerHTML;
+        else if (typeof str === "string") str = this.#templates[str]?.innerHTML ?? str;
+        else throw new TypeError("Invalid template");
+        return str.replace(/{{\s*(\w+)\s*}}/g,(_, key)=>data[key] ?? "").trim();
+    }
 
     get roles(){
         return [...this.#roles];
@@ -183,18 +221,15 @@ export default class MinTML{
         this.#roleManager();
     }
 
-    #roleManager(){
-        if(!this.roles.length) return;
-
-         // hide all elements with a data-show attribute
-        $$('[data-show]').forEach(el=>el.classList.add('mintml-lib-hidden'))
-        
-        // then remove the ones that match the users's current role
-        this.#showRoles[this.#currentRole]?.forEach(el=>{
-            el.classList.remove('mintml-lib-hidden');
-        })
+    get templates(){
+        return this.#templates;
     }
 }
+
+// helper functions
+export const $ = q=>document.querySelector(q);
+export const $$ = q=>[...document.querySelectorAll(q)];
+export const $id = id=>document.getElementById(id);
 
 export function form2Object(form){
     const formData = new FormData(form);
@@ -204,34 +239,7 @@ export function form2Object(form){
         }));
 }
 
-function queryStringParams(string){
+export function queryStringParams(string){
     const qs = Object.fromEntries(new URLSearchParams(string.split('?')[1]));
     return !Object.keys(qs).length? null : qs;
-}
-
-class Template{
-    constructor(){
-        throw new TypeError("Template is a static class and cannot be instantiated");
-    }
-
-    static templates = ((templates)=>{
-        const result = Object.fromEntries(Array.from(templates).map(t=>[t.id, t]));
-        // templates.forEach(t=>t.remove());
-        return result;
-    })($$('template'));
-
-    static render(str, data={}){
-        if (str instanceof HTMLTemplateElement) str = str.innerHTML;
-        else if (typeof str === "string") str = this.templates[str]?.innerHTML ?? str;
-        else throw new TypeError("Invalid template");
-        return str.replace(/{{\s*(\w+)\s*}}/g,(_, key)=>data[key] ?? "").trim();
-    }
-
-    static remove(){
-        Object.values(this.templates).forEach(t=>t.remove());
-    }
-
-    static has(id) {
-        return id in this.templates;
-    }
 }
