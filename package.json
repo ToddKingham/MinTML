@@ -1,6 +1,6 @@
 {
   "name": "@toddkingham/mintml",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "A minimal, HTML-first JavaScript library that extends standard HTML instead of replacing it — routing, templating, and role-based visibility that get out of the way. Remove `new MinTML()` and your page still works.",
   "type": "module",
   "main": "public/mintml.js",
