@@ -6,7 +6,7 @@ const CSS = `
     main { flex: 1; min-height: 0; display: flex; flex-direction: column;}
     [data-page] { display: none; }
     [data-page=active] { display: flex; flex: 1; overflow: auto; }
-    [data-page=active]#mintml-404 {
+    [data-page=active]#mintml-errorpage {
         background-color:white; position: absolute; width: 100vw; height: 100vh; margin: 0px; top: 0px; left: 0px; display: flex; align-items: center; justify-content: center; font-size: 40px;
     }
     [data-code] {margin-right: 10px; padding-right: 10px; border-right: 2px solid black;}
@@ -15,23 +15,35 @@ const CSS = `
 
 const DATA_PAGE = '[data-page]';
 const ACTIVE_PAGE = '[data-page=active]';
+const PREVIOUS_PAGE = '[data-page=previous]';
 const DATA_BEFORE = '[data-before]';
 const CSS_ID = 'mintml-app-css';
-
+const RESONSE_CODES = {"300": "Multiple Choices","301": "Moved Permanently","302": "Found","303": "See Other","304": "Not Modified","305": "Use Proxy","307": "Temporary Redirect","308": "Permanent Redirect","400": "Bad Request","401": "Unauthorized","402": "Payment Required","403": "Forbidden","404": "Not Found","405": "Method Not Allowed","406": "Not Acceptable","407": "Proxy Authentication Required","408": "Request Timeout","409": "Conflict","410": "Gone","411": "Length Required","412": "Precondition Failed","413": "Payload Too Large","414": "URI Too Long","415": "Unsupported Media Type","416": "Range Not Satisfiable","417": "Expectation Failed","418": "I'm a teapot","421": "Misdirected Request","422": "Unprocessable Entity","423": "Locked","424": "Failed Dependency","425": "Too Early","426": "Upgrade Required","428": "Precondition Required","429": "Too Many Requests","431": "Request Header Fields Too Large","451": "Unavailable For Legal Reasons","500": "Internal Server Error","501": "Not Implemented","502": "Bad Gateway","503": "Service Unavailable","504": "Gateway Timeout","505": "HTTP Version Not Supported","506": "Variant Also Negotiates","507": "Insufficient Storage","508": "Loop Detected","510": "Not Extended","511": "Network Authentication Required"}
+const ERROR_TEMPLATE = '<span data-code>{{code}}</span> <span data-message>{{message}}</span>';
 
 export default class MinTML{
-    #preflightHandler = ()=>true;
-    #defaultPageId = "";
-    #errorPageId = "";
+    #routeFilter = ()=>true;
     #beforeListeners = {};
     #currentRole;
     #showRoles = {};
     #roles;
     #templates = {};
+    #beforePreflightContract = {
+        element: null, 
+        payload: null,
+        params: null
+    };
+    #pageId = {
+        default: null,
+        error: null,
+        active: null,
+        previous: null,
+        all: []
+    };
     
-    constructor({roles=[], errorPageId='mintml-404'}={}){
+    constructor({roles=[], errorPageId='mintml-errorpage'}={}){
         // parse config object passed in
-        this.#errorPageId = errorPageId;
+        this.#pageId.error = errorPageId;
         this.roles = roles;
         
         this.#initCSS();
@@ -50,35 +62,23 @@ export default class MinTML{
     }
 
     #initNavigation(){
-        const beforeListenerContract = {
-            element: null, 
-            payload: null,
-            params: null
-        }
-
         const navigationHandler = async ({e, element, route, data})=>{
             e.preventDefault(); 
             
             const beforeHandler = this.#beforeListeners[element.dataset.before] || (()=>true);
-
-            // run the preflight check
-            if(await this.#preflightHandler(data)){
-                // if preflight passes do we need to run the "before" check?
-                if(e.target.closest(`${DATA_BEFORE}`)){
-                    // run the "before" check
-                    if(await beforeHandler(data)){
-                        if(route){
-                            this.navigate(route);
-                        }
-                    }
-                }
-                else {
+            if(e.target.closest(`${DATA_BEFORE}`)){
+                // run the "before" check
+                if(await beforeHandler(data)){
                     if(route){
                         this.navigate(route);
                     }
                 }
             }
-             
+            else {
+                if(route){
+                    this.navigate(route);
+                }
+            }
         }
         
         document.addEventListener("click", (async e => {
@@ -86,7 +86,7 @@ export default class MinTML{
             if (!element) return;
 
             const route = element.hash?.replace('#','');
-            const data = Object.assign({}, beforeListenerContract, {element, params: queryStringParams(element.hash)});
+            const data = Object.assign({}, this.#beforePreflightContract, {element, params: queryStringParams(element.hash)});
             await navigationHandler({e, element, route, data});
         }).bind(this));
 
@@ -95,33 +95,31 @@ export default class MinTML{
             if (!element) return;
 
             const route = element.action.split('#')[1];
-            const data = Object.assign({}, beforeListenerContract, {element, payload: form2Object(element), params: queryStringParams(element.action)});
+            const data = Object.assign({}, this.#beforePreflightContract, {element, payload: form2Object(element), params: queryStringParams(element.action)});
             await navigationHandler({e, element, route, data});    
         }).bind(this));
     }
 
     #initPages(){
-        // ensure there is an "active" data-page
-        const firstPage = $(DATA_PAGE);
-        const activePage = $(ACTIVE_PAGE);
-        const errorPage = $id(this.#errorPageId);
-        const defaultPage = activePage || firstPage;
+        this.#pageId.all = Array.from($$(DATA_PAGE)).map(p=>p.id);
 
         // if there are no pages... stop processing
-        if(!firstPage) return;
+        if(!this.#pageId.all.length) return;
+
+        // ensure there is an "active" data-page
+        const activePage = $(ACTIVE_PAGE);
+        const errorPage = $id(this.#pageId.error);
+        const defaultPage = activePage || this.#pageId.all[0];        
 
         // create a 404 page if needed
         if(!errorPage){
-            $('*:has(> section[data-page])').insertAdjacentHTML('beforeend', `
-            <section id="mintml-404" data-page>
-                <span data-code>404</span> <span data-message>Page Not Found</span>
-            </section>`);
+            $('*:has(> section[data-page])').insertAdjacentHTML('beforeend', `<section id="mintml-errorpage" data-page></section>`);
         }
 
         // set the default page flag just incase it's not hardcoded
-        console.log(defaultPage);
         defaultPage.dataset.page = "active";
-        this.#defaultPageId = defaultPage.id;
+        this.#pageId.default = defaultPage.id;
+        this.#pageId.active = defaultPage.id;
        
         
         // set up change listner
@@ -147,16 +145,58 @@ export default class MinTML{
     }
     
     async #processRoute(){
-        const nextRoute = location.hash.length ? location.hash : `#${this.#defaultPageId}`;
 
-        // // toggle active to previous and new route to active
-        ($('[data-page=previous]')||{dataset:{page:""}}).dataset.page='';
-        ($('[data-page=active]')||{dataset:{page:""}}).dataset.page='previous';
-        // $$('[data-page=active]').forEach(page=>page.dataset.page="");
-        try{$(nextRoute).dataset.page="active";}
+        // initialize some variables
+        let filterResult = true;
+        const whatsInTheURL = location.hash.length ? location.hash.replace('#','') : this.#pageId.default;
+        let nextRouteId = this.#pageId.all.includes(whatsInTheURL) ? whatsInTheURL : this.#pageId.error;
+        const urlActivePageMismatch = whatsInTheURL !== this.#pageId.active;
+        const isERROR = nextRouteId === this.#pageId.error;
+
+        const setErrorPage = (code)=>{
+            const errorResult = {code, message: RESONSE_CODES[code]}
+            if(errorResult.message){
+                $id(this.#pageId.error).innerHTML = this.render(ERROR_TEMPLATE, errorResult);
+            }
+            return !!errorResult.message;
+        }
         
-        // // throw to 404 page if route isn't valid
-        catch(e){$id(this.#errorPageId).dataset.page="active";}
+        // if it's a 404 set the error page and bypass the filter logic
+        if(isERROR){
+            setErrorPage(404);
+        }
+
+        // run the filter logic
+        else{
+            filterResult = this.#routeFilter({route: nextRouteId});
+            
+            // no return statement or return; results in success.
+            if(filterResult === undefined ){
+                filterResult = true;
+            }
+            else if(typeof filterResult === 'number'){
+                // process error codes
+                if(setErrorPage(filterResult)){
+                    nextRouteId = this.#pageId.error;
+                }
+            }
+        }
+
+        // if filter returns false, don't process the request and reset the URL in the browser
+        if(!filterResult && urlActivePageMismatch){
+            this.navigate(this.#pageId.active);
+            return;
+        }
+        
+        // process the request: update the #pageId object
+        this.#pageId.previous = this.#pageId.active;
+        this.#pageId.active = nextRouteId;
+
+        // resolve the DOM to match the #pageId object
+        $$(PREVIOUS_PAGE).forEach(p=>p.dataset.page="");
+        $$(ACTIVE_PAGE).forEach(p=>p.dataset.page="");
+        $id(this.#pageId.previous).dataset.page = "previous";
+        $id(this.#pageId.active).dataset.page = "active";
     }
 
     navigate(id){
@@ -172,8 +212,9 @@ export default class MinTML{
         return this;
     }
 
-    preflight(fn){
-        this.#preflightHandler = fn;
+    filter(fn){
+        this.#routeFilter = fn;
+        this.#processRoute();
     }
 
     render(str, data={}){

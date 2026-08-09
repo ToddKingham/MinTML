@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MinTML Sample App</title>
+
+    <style>
+        header {
+            height: 5rem;
+            background-color: lightblue;
+            display: flex;
+            justify-content: flex-end;
+            gap: .8em;
+        }
+
+        header > nav {
+            margin: 1em;
+        }
+
+        header > nav > a {
+            margin-left: 1em;
+        }
+
+        section[data-page=active]{
+            display: flex;
+            flex-direction: column;
+            margin: 1em;
+        }
+    </style>
+   
+    <script type="module">
+       import MinTML from './mintml.min.js';
+       const app = new MinTML({roles:['guest', 'user']});
+
+       app.filter(({route})=>{
+        const loginRoute = 'login';
+
+        if(app.role === 'guest' && route !== loginRoute){
+            app.navigate(loginRoute);
+            return false;
+        }
+     
+       });
+
+       app.before('test', ()=>{
+        console.log('IN BEFORE');
+        return true;
+       });
+
+       app.before('doLogin', ({payload})=>{
+        app.role = 'user';
+        return true;
+       });
+
+       app.before('logout', ()=>{
+        app.role = 'guest';
+        return true;
+       });
+
+       
+    </script>
+
+</head>
+<body>
+
+
+    <header>
+        <nav>
+            <a href="#home" data-before="test">Home</a>
+            <a href="#about">About Us</a>
+            <a href="#contact">Contact Us</a>
+            <a href="#login" data-before="logout">Log Out</a>
+        </nav>
+    </header>
+
+
+    <main>
+        <section id="login" data-page>
+            <h1>Login Screen</h1>
+            <form action="#home" data-before="doLogin">
+                <button>Submit</button>
+            </form>
+        </section>
+        <section id="home" data-page="active">home</section>
+        <section id="about" data-page>about</section>
+        <section id="contact" data-page>contact</section>
+    </main>
+
+
+    <template id="foo">
+        <div>{{name}}</div>
+    </template>
+    
+</body>
+</html>
