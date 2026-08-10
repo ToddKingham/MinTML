@@ -13,7 +13,10 @@
   ],
   "scripts": {
     "build": "mkdir -p dist && cp public/mintml.js dist/mintml.js && esbuild public/mintml.js --minify --format=esm --outfile=dist/mintml.min.js",
-    "prepublishOnly": "npm run build"
+    "prepublishOnly": "npm run build",
+    "release": "npm run build && npm version patch && npm publish",
+    "release:minor": "npm run build && npm version minor && npm publish",
+    "release:major": "npm run build && npm version major && npm publish"
   },
   "devDependencies": {
     "esbuild": "^0.28.1"
