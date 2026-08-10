@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>MinTML demo — roles</title>
+<link rel="stylesheet" href="_demo.css">
+
+<script type="module">
+  import MinTML from '/mintml.js';
+  const app = new MinTML({ roles: ['guest', 'user'] });
+
+  const sync = () => {
+    document.getElementById('roleLabel').textContent = app.role;
+    document.getElementById('roleLabel2').textContent = app.role;
+  };
+  sync();
+
+  app.before('doLogin', () => {
+    app.role = 'user';
+    sync();
+    return true;
+  });
+
+  app.before('logout', () => {
+    app.role = 'guest';
+    sync();
+    return true;
+  });
+</script>
+
+</head>
+<body>
+
+<header class="demo-nav">
+  <a href="#home">🏠 Home</a>
+  <a href="#login" data-before="logout" data-show="user">🚪 Log out</a>
+  <a href="#login" data-before="logout" data-show="guest">🚪 Log in</a>
+</header>
+
+<main>
+  <section id="login" data-page="active">
+    <div class="card">
+      <h2>Log in as a user</h2>
+      <p>Current role: <span class="pill" id="roleLabel">guest</span></p>
+      <form action="#home" data-before="doLogin">
+        <footer><button class="btn">Log in</button></footer>
+      </form>
+    </div>
+  </section>
+
+  <section id="home" data-page>
+    <div class="card">
+      <h2>Dashboard</h2>
+      <p>Current role: <span class="pill" id="roleLabel2">guest</span></p>
+      <p data-show="user" class="msg msg-ok">🔓 You can see this because your role is <code>user</code>. It's controlled with <code>data-show="user"</code> — no if-statements in the markup.</p>
+      <p data-show="guest" class="msg msg-error">👀 Guests see this instead (<code>data-show="guest"</code>). Log in above to swap it.</p>
+    </div>
+  </section>
+</main>
+
+</body>
+</html>

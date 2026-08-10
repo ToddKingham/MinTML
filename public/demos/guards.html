@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>MinTML demo — before guards</title>
+<link rel="stylesheet" href="_demo.css">
+<script type="module">
+  import MinTML from '/mintml.js';
+  const app = new MinTML();
+
+  app.before('doLogin', ({ payload }) => {
+    const msg = document.getElementById('loginMsg');
+    if (!payload.user?.trim() || !payload.password?.trim()) {
+      msg.innerHTML = '<span class="msg msg-error">Username and password are both required.</span>';
+      return false; // navigation is blocked
+    }
+    msg.innerHTML = '';
+    return true; // navigation proceeds to #dashboard
+  });
+</script>
+</head>
+<body>
+
+<main>
+  <section id="login" data-page="active">
+    <div class="card">
+      <h2>Log in <span class="pill">data-before</span></h2>
+      <p id="loginMsg"></p>
+      <form action="#dashboard" data-before="doLogin">
+        <label>Username <input type="text" name="user"></label>
+        <label>Password <input type="password" name="password"></label>
+        <footer><button class="btn">Log in</button></footer>
+      </form>
+    </div>
+  </section>
+
+  <section id="dashboard" data-page>
+    <div class="card">
+      <h2>Welcome 🎉</h2>
+      <p>The guard returned <code>true</code>, so MinTML let the form's <code>action="#dashboard"</code> proceed.</p>
+      <a href="#login" class="btn">Log out</a>
+    </div>
+  </section>
+</main>
+
+
+</body>
+</html>

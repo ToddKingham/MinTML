@@ -1,0 +1,8 @@
+<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="MinTML mint leaf logo">
+  <path d="M50,93 C19,85 6,59 11,36 C16,13 35,4 50,7 C65,4 84,13 89,36 C94,59 81,85 50,93 Z"
+        fill="#2FD98B" stroke="#16211B" stroke-width="5" stroke-linejoin="round"/>
+  <path d="M50,84 C50,60 50,34 50,12" fill="none" stroke="#16211B" stroke-width="4" stroke-linecap="round"/>
+  <path d="M50,66 C40,60 32,55 26,50" fill="none" stroke="#16211B" stroke-width="3.5" stroke-linecap="round"/>
+  <path d="M50,44 C60,39 68,34 74,29" fill="none" stroke="#16211B" stroke-width="3.5" stroke-linecap="round"/>
+  <ellipse cx="33" cy="27" rx="7" ry="4" fill="#F1FDF7" opacity="0.75" transform="rotate(-35 33 27)"/>
+</svg>

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>MinTML demo — routing</title>
+<link rel="stylesheet" href="_demo.css">
+<script type="module">
+  import MinTML from '/mintml.js';
+  const app = new MinTML();
+</script>
+</head>
+<body>
+
+<header class="demo-nav">
+  <a href="#home">🏠 Home</a>
+  <a href="#about">🌿 About</a>
+  <a href="#contact">✉️ Contact</a>
+</header>
+
+<main>
+  <section id="home" data-page="active">
+    <h2>Home <span class="pill">#home</span></h2>
+    <p>This whole nav bar is four <code>&lt;a href="#id"&gt;</code> links and three <code>[data-page]</code> sections. That's it — no route table.</p>
+  </section>
+
+  <section id="about" data-page>
+    <h2>About <span class="pill">#about</span></h2>
+    <p>MinTML watches <code>window.location.hash</code> and toggles which section has <code>data-page="active"</code>. Try reloading this frame on this tab — the URL remembers where you are.</p>
+  </section>
+
+  <section id="contact" data-page>
+    <h2>Contact <span class="pill">#contact</span></h2>
+    <p>Try changing the hash to something that doesn't exist, like <code>#nowhere</code> — MinTML shows a built-in 404 automatically.</p>
+  </section>
+</main>
+
+
+</body>
+</html>

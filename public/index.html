@@ -1,105 +1,466 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MinTML Sample App</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MinTML — the HTML-first JavaScript library</title>
+<meta name="description" content="MinTML is a tiny, HTML-first JavaScript library that extends standard HTML instead of replacing it — hash-based routing, before-guards, role-based visibility and lightweight templating, no build step required.">
 
-    <style>
-        header {
-            height: 5rem;
-            background-color: lightblue;
-            display: flex;
-            justify-content: flex-end;
-            gap: .8em;
-        }
+<link rel="icon" type="image/svg+xml" href="/img/favicon.svg">
 
-        header > nav {
-            margin: 1em;
-        }
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 
-        header > nav > a {
-            margin-left: 1em;
-        }
+<link rel="stylesheet" href="/css/style.css">
 
-        section[data-page=active]{
-            display: flex;
-            flex-direction: column;
-            margin: 1em;
-        }
-
-        #template_holder {
-            border: 5px dashed darkgray;
-            width: 200px;
-            height: 200px;
-            border-radius: 20px;
-            margin: 50px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-    </style>
-   
-    <script type="module">
-       import MinTML from './mintml.js';
-       const app = new MinTML();
-
-        app.before("doLogin", (obj)=>{
-            console.log(obj);
-            // console.log(payload);
-
-            // document.getElementById('template_holder').innerHTML = app.render('foo', {name: payload.user});
-
-            return false;
-        });
-
-
-    </script>
-
+<script type="module">
+  import MinTML from './mintml.js';
+  window.app = new MinTML();
+</script>
+<script src="/js/site.js" type="module"></script>
 </head>
-
 <body>
 
-    <header>
-        <nav>
-            <a href="#home?user=Joe" data-before="doLogin">Home</a>
-            <a href="#about">About Us</a>
-            <a href="#contact">Contact Us</a>
-            <a href="#login">Log Out</a>
+<!-- ============ HEADER ============ -->
+<header class="site-header">
+  <div class="container">
+    <a href="#home" class="brand">
+      <img src="/img/logo-mark.svg" class="logo-mark leaf-spin" alt="">
+      MinTML
+    </a>
+
+    <button class="nav-toggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false">
+      <svg width="20" height="20" viewBox="0 0 20 20"><path d="M2 4h16M2 10h16M2 16h16" stroke="#16211B" stroke-width="2.4" stroke-linecap="round"/></svg>
+    </button>
+
+    <nav class="main-nav" id="mainNav">
+      <a href="#home">Home</a>
+      <a href="#docs">Docs</a>
+      <a href="#examples">Examples</a>
+      <a href="#download">Download</a>
+      <a href="https://github.com/ToddKingham/MinTML" target="_blank" rel="noopener">GitHub ↗</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+
+<!-- ============ HOME ============ -->
+<section id="home" data-page="active">
+
+  <section class="hero">
+    <div class="hero-blob" style="width:420px;height:420px;background:var(--mint-100);top:-160px;right:-120px;"></div>
+    <div class="hero-blob" style="width:260px;height:260px;background:var(--cream-deep);bottom:-100px;left:-80px;"></div>
+    <div class="container hero-grid">
+      <div class="hero-copy">
+        <span class="eyebrow">🌱 HTML-first · Zero build step</span>
+        <h1>The web already knows HTML.<br>Teach it a few more tricks.</h1>
+        <p class="hero-sub">MinTML is a minimal JavaScript library that <em>extends</em> standard HTML instead of replacing it. Routing, templating, and role-based visibility that get out of the way. Delete <code class="inline-code">&lt;script&gt;</code> and your page still works.</p>
+        <div class="hero-actions">
+          <a href="#download" class="btn btn-primary">Get Started</a>
+          <a href="#examples" class="btn btn-ghost">See it in Action</a>
+        </div>
+        <div class="dots-row" style="margin-top:2rem;flex-wrap:wrap;">
+          <span class="stat-pill">📦 4.4kB minified</span>
+          <span class="stat-pill">🍃 0 dependencies</span>
+          <span class="stat-pill">⚙️ 0 config</span>
+        </div>
+      </div>
+      <div class="hero-visual" style="display:flex;justify-content:center;">
+        <img src="/img/logo-mark.svg" alt="MinTML mint leaf" class="leaf-spin" style="width:min(340px, 70vw);">
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="section-head center">
+        <span class="eyebrow">Quick example</span>
+        <h2>Two lines of JavaScript. That's the whole router.</h2>
+        <p class="hero-sub" style="margin:0 auto;">Mark sections with <code class="inline-code">data-page</code>, link to them with a normal hash link, and MinTML wires up the rest.</p>
+      </div>
+
+      <div class="code-block">
+        <button class="copy-btn" data-copy-target="quick-example">Copy</button>
+        <pre><code id="quick-example">
+&lt;script type="module"&gt;
+  import MinTML from 'https://cdn.jsdelivr.net/npm/@toddkingham/mintml/public/mintml.min.js';
+  const app = new MinTML();
+&lt;/script&gt;
+
+&lt;header&gt;
+  &lt;nav&gt;
+    &lt;a href="#"&gt;Home&lt;/a&gt;
+    &lt;a href="#about"&gt;About&lt;/a&gt;
+  &lt;/nav&gt;
+&lt;/header&gt;
+
+&lt;main&gt;
+  &lt;section id="home" data-page&gt;Home content&lt;/section&gt;
+  &lt;section id="about" data-page&gt;About content&lt;/section&gt;
+&lt;/main&gt;
+
+</code></pre>
+      </div>
+      <p style="text-align:center;color:var(--ink-soft);margin-top:1rem;">Every <code class="inline-code">[data-page]</code> section is a page. Hash links toggle which one is visible — no router config. Strip the <code class="inline-code">&lt;script&gt;</code> tag and it's still valid, readable HTML. <a href="#home">This site does exactly that</a> — view source any time.</p>
+    </div>
+  </section>
+
+  <section class="section section-alt">
+    <div class="container">
+      <div class="section-head center">
+        <span class="eyebrow">Why MinTML</span>
+        <h2>HTML is the foundation, not an afterthought</h2>
+      </div>
+      <div class="grid grid-3">
+        <div class="card">
+          <div class="card-icon">🧩</div>
+          <h3>Progressive by default</h3>
+          <p>Every MinTML page should degrade gracefully. Remove the script tag and you still have a working, semantic HTML document — not a blank div.</p>
+        </div>
+        <div class="card card-mint">
+          <div class="card-icon">🚫</div>
+          <h3>No build step</h3>
+          <p>No bundler, no virtual DOM, no config file. Drop in a script tag — from npm or straight off jsDelivr — and start writing <code class="inline-code">data-*</code> attributes.</p>
+        </div>
+        <div class="card card-cream">
+          <div class="card-icon">🌿</div>
+          <h3>Tiny footprint</h3>
+          <p>About 4.4kB minified, ~1.9kB gzipped. No dependencies to audit, no transitive packages, nothing to keep patched.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="features">
+    <div class="container">
+      <div class="section-head center">
+        <span class="eyebrow">What's inside</span>
+        <h2>A small toolbox, not a framework</h2>
+      </div>
+      <div class="grid grid-3">
+        <div class="card">
+          <div class="card-icon">🔀</div>
+          <h3>Hash-based routing</h3>
+          <p>Mark sections with <code class="inline-code">data-page</code>; navigation is driven by <code class="inline-code">href="#id"</code> links and <code class="inline-code">window.location.hash</code>. Built-in 404 handling included.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">🛡️</div>
+          <h3>Before-guards</h3>
+          <p>Intercept a link or form submission, run async validation or confirmation logic, and decide whether navigation proceeds — with <code class="inline-code">data-before</code>.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">🎭</div>
+          <h3>Role-based visibility</h3>
+          <p>Elements with <code class="inline-code">data-show="admin,editor"</code> show or hide automatically based on the app's current role.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">🧵</div>
+          <h3>Lightweight templating</h3>
+          <p><code class="inline-code">&lt;template&gt;</code> elements render anywhere with <code class="inline-code">{{variable}}</code> substitution — no DSL to learn.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">🔎</div>
+          <h3>DOM helpers</h3>
+          <p><code class="inline-code">$</code>, <code class="inline-code">$$</code>, and <code class="inline-code">$id</code> are exported as short, familiar wrappers around the query selector methods you already know.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">📮</div>
+          <h3>Form serialization</h3>
+          <p><code class="inline-code">form2Object(form)</code> turns a submitted form into a plain object, grouping repeated fields into arrays automatically.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-alt">
+    <div class="container" style="text-align:center;">
+      <h2>Ready to remove the build step?</h2>
+      <p class="hero-sub" style="margin:0 auto 1.6rem;">Install from npm, or drop a single script tag from jsDelivr. Either way, you're shipping in under a minute.</p>
+      <div class="hero-actions" style="justify-content:center;">
+        <a href="#download" class="btn btn-primary">Download / Install</a>
+        <a href="#docs" class="btn btn-ghost">Read the Docs</a>
+      </div>
+    </div>
+  </section>
+
+</section>
+
+<!-- ============ DOCS ============ -->
+<section id="docs" data-page>
+  <section class="section">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow">Documentation</span>
+        <h2>Docs</h2>
+        <p class="hero-sub">Everything MinTML does, in one page. For the full source and issue tracker, see <a href="https://github.com/ToddKingham/MinTML" target="_blank" rel="noopener">GitHub</a>.</p>
+      </div>
+
+      <div class="docs-layout">
+        <nav class="doc-toc">
+          <a href="#docs">Philosophy</a>
+          <a href="#docs">Data Attributes</a>
+          <a href="#docs">Templating</a>
+          <a href="#docs">Guards &amp; Roles</a>
+          <a href="#docs">API Reference</a>
         </nav>
-    </header>
 
-    <main>
-        <section id="login">
-            <h1>Login Screen</h1>
-            <form action="#home" data-before="doLogin">
-                <label>
-                    User Name:
-                    <input type="text" name="user">
-                </label>
-                
-                
-                <button>Submit</button>
-            </form>
+        <div class="doc-content">
 
-            <h2>Place Template here</h2>
-            <div id="template_holder">
-                <template id="foo">
-                    <div>Hello, {{name}}!</div>
-                </template>
+          <div class="doc-block" id="philosophy">
+            <h3>🌱 Philosophy</h3>
+            <p>HTML is the foundation, not an afterthought. A MinTML page should degrade gracefully — if you delete the script tag, you still have a working, semantic HTML document. The library adds behavior on top of markup you'd write anyway; it doesn't ask you to learn a templating DSL, run a bundler, or restructure your project around it.</p>
+          </div>
+
+          <div class="doc-block" id="attributes">
+            <h3>🏷️ Data attributes</h3>
+            <p>MinTML reads a small set of <code class="inline-code">data-*</code> attributes already sitting in your markup.</p>
+            <table class="api-table">
+              <thead><tr><th>Attribute</th><th>Where</th><th>What it does</th></tr></thead>
+              <tbody>
+                <tr><td><code class="inline-code">data-page</code></td><td><code class="inline-code">&lt;section&gt;</code></td><td>Marks a routable page. MinTML toggles <code class="inline-code">data-page="active"</code> / <code class="inline-code">"previous"</code> to control which one is visible.</td></tr>
+                <tr><td><code class="inline-code">data-before</code></td><td><code class="inline-code">&lt;a&gt;</code> / <code class="inline-code">&lt;form&gt;</code></td><td>Names a guard function (registered with <code class="inline-code">app.before()</code>) to run before navigation proceeds.</td></tr>
+                <tr><td><code class="inline-code">data-show</code></td><td>any element</td><td>Comma-separated list of roles allowed to see this element, e.g. <code class="inline-code">data-show="admin,editor"</code>.</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="doc-block" id="templating">
+            <h3>🧵 Templating</h3>
+            <p><code class="inline-code">&lt;template&gt;</code> elements are read once on load and removed from the DOM. Render them anywhere with <code class="inline-code">{{key}}</code> substitution:</p>
+            <div class="code-block">
+              <button class="copy-btn" data-copy-target="tpl-example">Copy</button>
+              <pre><code id="tpl-example">&lt;template id="card"&gt;Hello {{name}}&lt;/template&gt;
+
+&lt;script type="module"&gt;
+  el.innerHTML = app.render('card', { name: 'Todd' });
+&lt;/script&gt;</code></pre>
             </div>
+          </div>
 
-        </section>
+          <div class="doc-block" id="guards">
+            <h3>🛡️ Guards &amp; roles</h3>
+            <p>Register a guard, then reference it by name from any link or form:</p>
+            <div class="code-block">
+              <button class="copy-btn" data-copy-target="guard-example">Copy</button>
+              <pre><code id="guard-example">app.before('confirmDelete', async ({ element, payload }) =&gt; {
+  return confirm('Are you sure?');
+});</code></pre>
+            </div>
+            <div class="code-block" style="margin-bottom:1.4rem;">
+              <button class="copy-btn" data-copy-target="guard-html-example">Copy</button>
+              <pre><code id="guard-html-example">&lt;a href="#done" data-before="confirmDelete"&gt;Delete&lt;/a&gt;</code></pre>
+            </div>
+            <p>Roles work the same way — configure them up front, then flip the current role at runtime:</p>
+            <div class="code-block">
+              <button class="copy-btn" data-copy-target="role-example">Copy</button>
+              <pre><code id="role-example">const app = new MinTML({ roles: ['guest', 'admin'] });
+app.role = 'admin';</code></pre>
+            </div>
+          </div>
 
-        <section id="home">home</section>
-        
-        <section id="about">about</section>
-        
-        <section id="contact">contact</section>
-    </main>
+          <div class="doc-block" id="api">
+            <h3>📖 API reference</h3>
+            <table class="api-table">
+              <thead><tr><th>Export</th><th>Description</th></tr></thead>
+              <tbody>
+                <tr><td><code class="inline-code">MinTML</code> <span class="badge badge-mint">default</span></td><td>Main class. <code class="inline-code">new MinTML({ roles, errorPageId })</code></td></tr>
+                <tr><td><code class="inline-code">.navigate(id)</code></td><td>Navigate to a page by id</td></tr>
+                <tr><td><code class="inline-code">.refresh()</code></td><td>Re-run routing for the current hash</td></tr>
+                <tr><td><code class="inline-code">.before(name, fn)</code></td><td>Register a guard used by <code class="inline-code">data-before="name"</code></td></tr>
+                <tr><td><code class="inline-code">.filter(fn)</code></td><td>Register a global route filter — return <code class="inline-code">false</code> or an HTTP status code to block navigation</td></tr>
+                <tr><td><code class="inline-code">.role</code> / <code class="inline-code">.roles</code></td><td>Get/set the current role and configured roles</td></tr>
+                <tr><td><code class="inline-code">.render(templateIdOrString, data)</code></td><td>Render a <code class="inline-code">&lt;template&gt;</code> with <code class="inline-code">{{key}}</code> substitution</td></tr>
+                <tr><td><code class="inline-code">$(selector)</code></td><td><code class="inline-code">document.querySelector</code> shorthand</td></tr>
+                <tr><td><code class="inline-code">$$(selector)</code></td><td><code class="inline-code">document.querySelectorAll</code> shorthand, returns an array</td></tr>
+                <tr><td><code class="inline-code">$id(id)</code></td><td><code class="inline-code">document.getElementById</code> shorthand</td></tr>
+                <tr><td><code class="inline-code">form2Object(form)</code></td><td>Serialize a <code class="inline-code">&lt;form&gt;</code> element into a plain object</td></tr>
+              </tbody>
+            </table>
+          </div>
 
-    
-    
+        </div>
+      </div>
+    </div>
+  </section>
+</section>
+
+<!-- ============ EXAMPLES ============ -->
+<section id="examples" data-page>
+  <section class="section">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow">Examples</span>
+        <h2>Live &amp; interactive</h2>
+        <p class="hero-sub">Every demo below is a real, isolated page running MinTML loaded straight from jsDelivr. Click around, then view source — there's nothing hidden.</p>
+      </div>
+
+      <div class="example-block">
+        <div class="example-head"><h3>Hash-based routing</h3><span class="badge badge-mint">data-page</span></div>
+        <p>Click the nav links. Each <code class="inline-code">[data-page]</code> section becomes visible in turn — no router configuration.</p>
+        <div class="demo-frame-wrap">
+          <div class="demo-chrome"><span class="demo-dot"></span><span class="demo-dot"></span><span class="demo-dot"></span><span>demos/routing.html</span></div>
+          <iframe src="demos/routing.html" title="Routing demo" loading="lazy"></iframe>
+        </div>
+      </div>
+
+      <div class="example-block">
+        <div class="example-head"><h3>Before-guards (login form)</h3><span class="badge">data-before</span></div>
+        <p>The form won't navigate until the guard function approves it — try submitting empty.</p>
+        <div class="demo-frame-wrap">
+          <div class="demo-chrome"><span class="demo-dot"></span><span class="demo-dot"></span><span class="demo-dot"></span><span>demos/guards.html</span></div>
+          <iframe src="demos/guards.html" title="Before guard demo" loading="lazy"></iframe>
+        </div>
+      </div>
+
+      <div class="example-block">
+        <div class="example-head"><h3>Role-based visibility</h3><span class="badge">data-show</span></div>
+        <p>Log in to flip the app's role from <code class="inline-code">guest</code> to <code class="inline-code">user</code> — watch elements appear.</p>
+        <div class="demo-frame-wrap">
+          <div class="demo-chrome"><span class="demo-dot"></span><span class="demo-dot"></span><span class="demo-dot"></span><span>demos/roles.html</span></div>
+          <iframe src="demos/roles.html" title="Roles demo" loading="lazy"></iframe>
+        </div>
+      </div>
+
+      <div class="example-block">
+        <div class="example-head"><h3>Templating</h3><span class="badge badge-mint">&lt;template&gt;</span></div>
+        <p>Fill in the mad-libs form and MinTML renders a <code class="inline-code">&lt;template&gt;</code> with your values substituted in.</p>
+        <div class="demo-frame-wrap">
+          <div class="demo-chrome"><span class="demo-dot"></span><span class="demo-dot"></span><span class="demo-dot"></span><span>demos/templates.html</span></div>
+          <iframe src="demos/templates.html" title="Templating demo" loading="lazy"></iframe>
+        </div>
+      </div>
+
+    </div>
+  </section>
+</section>
+
+<!-- ============ DOWNLOAD ============ -->
+<section id="download" data-page>
+  <section class="section">
+    <div class="container">
+      <div class="section-head center">
+        <span class="eyebrow">Download</span>
+        <h2>Pick your flavor</h2>
+        <p class="hero-sub" style="margin:0 auto;">npm for a real project, jsDelivr for a single HTML file. Both ship the exact same library — <span class="badge badge-mint">v0.1.5</span></p>
+      </div>
+
+      <div class="grid grid-2">
+        <div class="card">
+          <div class="card-icon">📦</div>
+          <h3>Install from npm</h3>
+          <div class="code-block">
+            <button class="copy-btn" data-copy-target="npm-install">Copy</button>
+            <pre><code id="npm-install">npm install @toddkingham/mintml</code></pre>
+          </div>
+          <div class="code-block">
+            <button class="copy-btn" data-copy-target="npm-import">Copy</button>
+            <pre><code id="npm-import">import MinTML from '@toddkingham/mintml';</code></pre>
+          </div>
+        </div>
+
+        <div class="card card-mint">
+          <div class="card-icon">🌐</div>
+          <h3>Use the CDN</h3>
+          <p>No install needed — import straight from jsDelivr:</p>
+          <div class="code-block">
+            <button class="copy-btn" data-copy-target="cdn-dev">Copy</button>
+            <pre><code id="cdn-dev">&lt;script type="module"&gt;
+  import MinTML from
+    'https://cdn.jsdelivr.net/npm/@toddkingham/mintml/public/mintml.js';
+&lt;/script&gt;</code></pre>
+          </div>
+          <p style="margin-top:1rem;">Or the minified build (~4.4kB, ~1.9kB gzipped) for production:</p>
+          <div class="code-block">
+            <button class="copy-btn" data-copy-target="cdn-min">Copy</button>
+            <pre><code id="cdn-min">&lt;script type="module"&gt;
+  import MinTML from
+    'https://cdn.jsdelivr.net/npm/@toddkingham/mintml/public/mintml.min.js';
+&lt;/script&gt;</code></pre>
+          </div>
+        </div>
+      </div>
+
+      <div class="divider-leaf">🍃</div>
+
+      <div class="grid grid-3">
+        <a href="https://www.npmjs.com/package/@toddkingham/mintml" target="_blank" rel="noopener" class="card" style="text-decoration:none;color:inherit;">
+          <div class="card-icon">📮</div>
+          <h3>npm package</h3>
+          <p style="color:var(--ink-soft);">@toddkingham/mintml on the npm registry.</p>
+        </a>
+        <a href="https://github.com/ToddKingham/MinTML" target="_blank" rel="noopener" class="card" style="text-decoration:none;color:inherit;">
+          <div class="card-icon">🐙</div>
+          <h3>GitHub source</h3>
+          <p style="color:var(--ink-soft);">Read the code, star it, or open an issue.</p>
+        </a>
+        <a href="https://www.jsdelivr.com/package/npm/@toddkingham/mintml" target="_blank" rel="noopener" class="card" style="text-decoration:none;color:inherit;">
+          <div class="card-icon">🚀</div>
+          <h3>jsDelivr CDN</h3>
+          <p style="color:var(--ink-soft);">Browse every published version and file.</p>
+        </a>
+      </div>
+
+      <p style="text-align:center;color:var(--ink-soft);margin-top:2.5rem;">Licensed under <a href="https://github.com/ToddKingham/MinTML/blob/main/LICENSE" target="_blank" rel="noopener">MIT</a> · © Todd Kingham</p>
+    </div>
+  </section>
+</section>
+
+<!-- ============ 404 ============ -->
+<section id="mintml-errorpage" data-page>
+  <span data-code>404</span>
+  <span data-message>Not Found</span>
+  <a href="#home" class="btn btn-primary" style="margin-top:1rem;">Back to Home</a>
+</section>
+
+</main>
+
+<!-- ============ FOOTER ============ -->
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <div class="footer-brand">
+          <img src="/img/logo-mark.svg" class="logo-mark" alt="" style="width:32px;height:32px;">
+          MinTML
+        </div>
+        <p style="color:var(--mint-100);opacity:.85;max-width:32ch;">A minimal, HTML-first JavaScript library. Extends standard HTML instead of replacing it.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Product</h4>
+        <ul>
+          <li><a href="#home">Home</a></li>
+          <li><a href="#docs">Docs</a></li>
+          <li><a href="#examples">Examples</a></li>
+          <li><a href="#download">Download</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Resources</h4>
+        <ul>
+          <li><a href="https://github.com/ToddKingham/MinTML" target="_blank" rel="noopener">GitHub</a></li>
+          <li><a href="https://www.npmjs.com/package/@toddkingham/mintml" target="_blank" rel="noopener">npm</a></li>
+          <li><a href="https://cdn.jsdelivr.net/npm/@toddkingham/mintml/public/mintml.min.js" target="_blank" rel="noopener">jsDelivr CDN</a></li>
+          <li><a href="https://github.com/ToddKingham/MinTML/blob/main/LICENSE" target="_blank" rel="noopener">License (MIT)</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Community</h4>
+        <ul>
+          <li><a href="https://github.com/ToddKingham/MinTML/issues" target="_blank" rel="noopener">Issues</a></li>
+          <li><a href="https://github.com/ToddKingham/MinTML/blob/main/README.md" target="_blank" rel="noopener">README</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© <span id="year"></span> Todd Kingham · MIT License</span>
+      <span>🌱 This site's navigation runs on MinTML itself — view source.</span>
+    </div>
+  </div>
+</footer>
+
+
+
 </body>
 </html>

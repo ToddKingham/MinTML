@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>MinTML demo — templating</title>
+<link rel="stylesheet" href="_demo.css">
+<style>
+  #story{
+    border:3px dashed var(--mint-600); border-radius:20px; padding:1rem; min-height:70px;
+    display:flex; align-items:center; background:var(--white); margin-top:1rem; font-size:1.02rem;
+  }
+  #story span{border-bottom:2px dashed var(--mint-600); font-weight:700; color:#0d6b45;}
+</style>
+
+<script type="module">
+  import MinTML from '/mintml.js';
+  const app = new MinTML();
+
+  app.before('showStory', ({ payload }) => {
+    const msg = document.getElementById('formMsg');
+    if (Object.values(payload).some(v => v.trim() === '')) {
+      msg.innerHTML = '<span class="msg msg-error">All three fields are required.</span>';
+      return false;
+    }
+    msg.innerHTML = '';
+    document.getElementById('story').innerHTML = app.render('storyTemplate', payload);
+    return false; // stay on this page, don't navigate anywhere
+  });
+</script>
+
+</head>
+<body>
+
+<main>
+  <div class="card">
+    <h2>Mad-libs <span class="pill">&lt;template&gt;</span></h2>
+    <p id="formMsg"></p>
+    <form data-before="showStory">
+      <label>Noun <input type="text" name="noun" value="balloon"></label>
+      <label>Adjective <input type="text" name="adjective" value="furry"></label>
+      <label>Name <input type="text" name="name" value="Joe"></label>
+      <footer><button class="btn btn-accent">Render template</button></footer>
+    </form>
+  </div>
+
+  <div id="story">Fill out the form and press "Render template" — this box is rendered by <code>app.render()</code>, not innerHTML string-building.</div>
+
+  <template id="storyTemplate">
+    <p>One day, <span>{{name}}</span> found a <span>{{adjective}}</span> <span>{{noun}}</span> hiding behind the old barn.
+            Excited, <span>{{name}}</span> picked up the <span>{{noun}}</span> and discovered it contained a mysterious map.
+            Without hesitation, <span>{{name}}</span> followed the map toward an adventure that would change everything.</p>
+  </template>
+</main>
+
+</body>
+</html>
