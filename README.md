@@ -22,15 +22,15 @@ import MinTML from '@toddkingham/mintml';
 
 ```html
 <script type="module">
-  import MinTML from 'https://cdn.jsdelivr.net/npm/@toddkingham/mintml/public/mintml.js';
+  import MinTML from 'https://cdn.jsdelivr.net/npm/@toddkingham/mintml/dist/mintml.js';
 </script>
 ```
 
-A minified build is also published at `public/mintml.min.js` (about 4.4kB, ~1.9kB gzipped) — swap the path above for `public/mintml.min.js` in production if you want the smaller payload:
+A minified build is also published at `dist/mintml.min.js` (about 4.4kB, ~1.9kB gzipped) — swap the path above for `dist/mintml.min.js` in production if you want the smaller payload:
 
 ```html
 <script type="module">
-  import MinTML from 'https://cdn.jsdelivr.net/npm/@toddkingham/mintml/public/mintml.min.js';
+  import MinTML from 'https://cdn.jsdelivr.net/npm/@toddkingham/mintml/dist/mintml.min.js';
 </script>
 ```
 
@@ -109,11 +109,11 @@ MinTML encourages standards-compliant, semantic markup: clean, pure HTML, modern
 ## Development
 
 ```bash
-npm install       # installs esbuild, used only to produce the minified build
-npm run build     # regenerates public/mintml.min.js from public/mintml.js
+npm install       # installs esbuild, used only to produce the dist build
+npm run build     # regenerates dist/mintml.js and dist/mintml.min.js from public/mintml.js
 ```
 
-The minified build regenerates automatically before every `npm publish` (via `prepublishOnly`), so you never have to remember to run it by hand.
+The `dist/` build regenerates automatically before every `npm publish` (via `prepublishOnly`), so you never have to remember to run it by hand. `dist/` is gitignored — it's fully derived from `public/mintml.js`, so there's nothing there to hand-edit or commit.
 
 ## License
 

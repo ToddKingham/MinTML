@@ -3,17 +3,16 @@
   "version": "0.1.5",
   "description": "The HTML-first, zero-build, single-page, client-side application, micro-framework. Extends standard HTML instead of replacing it — routing, templating, and role-based visibility that get out of the way. Remove `new MinTML()` and your page still works.",
   "type": "module",
-  "main": "public/mintml.js",
-  "module": "public/mintml.js",
-  "exports": "./public/mintml.js",
-  "unpkg": "public/mintml.min.js",
-  "jsdelivr": "public/mintml.min.js",
+  "main": "dist/mintml.js",
+  "module": "dist/mintml.js",
+  "exports": "./dist/mintml.js",
+  "unpkg": "dist/mintml.min.js",
+  "jsdelivr": "dist/mintml.min.js",
   "files": [
-    "public/mintml.js",
-    "public/mintml.min.js"
+    "dist"
   ],
   "scripts": {
-    "build": "esbuild public/mintml.js --minify --format=esm --outfile=public/mintml.min.js",
+    "build": "mkdir -p dist && cp public/mintml.js dist/mintml.js && esbuild public/mintml.js --minify --format=esm --outfile=dist/mintml.min.js",
     "prepublishOnly": "npm run build"
   },
   "devDependencies": {
