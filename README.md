@@ -11,18 +11,18 @@ No build step required to *use* it, no config, no virtual DOM. Just HTML with a 
 ## Install
 
 ```bash
-npm install @toddkingham/mintml
+npm install @mintml/mintml
 ```
 
 ```js
-import MinTML from '@toddkingham/mintml';
+import MinTML from '@mintml/mintml';
 ```
 
 ### Or via CDN (no install needed)
 
 ```html
 <script type="module">
-  import MinTML from 'https://cdn.jsdelivr.net/npm/@toddkingham/mintml/dist/mintml.js';
+  import MinTML from 'https://cdn.jsdelivr.net/npm/@mintml/mintml/dist/mintml.js';
 </script>
 ```
 
@@ -30,7 +30,7 @@ A minified build is also published at `dist/mintml.min.js` (about 4.4kB, ~1.9kB 
 
 ```html
 <script type="module">
-  import MinTML from 'https://cdn.jsdelivr.net/npm/@toddkingham/mintml/dist/mintml.min.js';
+  import MinTML from 'https://cdn.jsdelivr.net/npm/@mintml/mintml/dist/mintml.min.js';
 </script>
 ```
 
@@ -50,7 +50,7 @@ A minified build is also published at `dist/mintml.min.js` (about 4.4kB, ~1.9kB 
 </main>
 
 <script type="module">
-  import MinTML from '@toddkingham/mintml';
+  import MinTML from '@mintml/mintml';
   const app = new MinTML();
 </script>
 ```

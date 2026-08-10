@@ -1,5 +1,5 @@
 {
-  "name": "@toddkingham/mintml",
+  "name": "@mintml/mintml",
   "version": "0.1.6",
   "description": "The HTML-first, zero-build, single-page, client-side application, micro-framework. Extends standard HTML instead of replacing it — routing, templating, and role-based visibility that get out of the way. Remove `new MinTML()` and your page still works.",
   "type": "module",
