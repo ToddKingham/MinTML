@@ -1,6 +1,10 @@
 # MinTML
 
-A minimal, HTML-first JavaScript library. **MinTML** extends standard HTML instead of replacing it — routing, templating, and role-based visibility that get out of the way. Remove `new MinTML()` from your page and everything (links, forms, layout) should still just work.
+**The HTML-first, zero-build, single-page, client-side application, micro-framework.**
+
+MinTML extends standard HTML instead of replacing it — routing, templating, and role-based visibility that get out of the way. Remove `new MinTML()` from your page and everything (links, forms, layout) should still just work.
+
+Write clean, pure HTML, modern CSS, and vanilla JavaScript — standards-compliant, semantic markup that runs natively in the browser, with no transpiler standing between your code and the platform. The way the web was intended.
 
 No build step required to *use* it, no config, no virtual DOM. Just HTML with a few `data-*` attributes and a small script tag.
 
@@ -98,7 +102,9 @@ Every `[data-page]` section is a "page." Hash links (`#about`) toggle which one 
 
 ## Philosophy
 
-HTML is the foundation, not an afterthought. A MinTML page should degrade gracefully — if you delete the script tag, you still have a working, semantic HTML document. The library adds behavior on top of markup you'd write anyway; it doesn't ask you to learn a templating DSL, run a bundler, or restructure your project around it.
+HTML is the foundation, not an afterthought. A MinTML page should degrade gracefully — if you delete the script tag, you still have a working, semantic HTML document.
+
+MinTML encourages standards-compliant, semantic markup: clean, pure HTML, modern CSS, and vanilla JavaScript that run natively in the browser — no transpiler, no compiler, no build step standing between your code and the platform. The micro-framework adds behavior on top of markup you'd write anyway; it doesn't ask you to learn a templating DSL, run a bundler, or restructure your project around it. This is the way the web was intended.
 
 ## Development
 

@@ -1,7 +1,7 @@
 {
   "name": "@toddkingham/mintml",
   "version": "0.1.5",
-  "description": "A minimal, HTML-first JavaScript library that extends standard HTML instead of replacing it — routing, templating, and role-based visibility that get out of the way. Remove `new MinTML()` and your page still works.",
+  "description": "The HTML-first, zero-build, single-page, client-side application, micro-framework. Extends standard HTML instead of replacing it — routing, templating, and role-based visibility that get out of the way. Remove `new MinTML()` and your page still works.",
   "type": "module",
   "main": "public/mintml.js",
   "module": "public/mintml.js",
@@ -22,11 +22,14 @@
   "keywords": [
     "html",
     "html-first",
+    "micro-framework",
     "vanilla-js",
+    "semantic-html",
     "progressive-enhancement",
     "router",
     "spa",
     "templating",
+    "zero-build",
     "no-build",
     "standards"
   ],
