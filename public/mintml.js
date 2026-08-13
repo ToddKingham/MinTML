@@ -5,7 +5,7 @@ const CSS = `
     body > header { flex-shrink: 0;}
     main { flex: 1; min-height: 0; display: flex; flex-direction: column;}
     [data-page] { display: none; }
-    [data-page=active] { display: flex; flex: 1; overflow: auto; }
+    [data-page=active] { display: block; flex: 1; overflow: auto; }
     [data-page=active]#mintml-errorpage {
         background-color:white; position: absolute; width: 100vw; height: 100vh; margin: 0px; top: 0px; left: 0px; display: flex; align-items: center; justify-content: center; font-size: 40px;
     }
