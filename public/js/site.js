@@ -1,8 +1,17 @@
 // Small progressive-enhancement extras for the marketing site.
 // Routing/pages/templating are all handled by MinTML itself (see index.html) —
 // this file only handles things outside MinTML's job: mobile nav + copy buttons.
+import MinTML from '/mintml.js';
+const app = new MinTML({roles:['guest', 'hero0', 'hero1', 'hero2', 'hero3']});
+window.app = app;
 
 document.getElementById('year').textContent = new Date().getFullYear();
+
+// --- random hero ---
+document.querySelectorAll('[data-random]').forEach(el=>{
+ (a=>a[Math.floor(Math.random() * a.length)])(Array.from(el.querySelectorAll(':scope > *'))).classList.add('active')
+})
+
 
 // --- mobile nav toggle ---
 const navToggle = document.getElementById('navToggle');

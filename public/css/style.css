@@ -90,7 +90,7 @@ p { margin: 0 0 1em; }
   font-family: var(--font-display);
   font-weight: 600;
   font-size: .85rem;
-  text-transform: uppercase;
+  /* text-transform: uppercase; */
   letter-spacing: .08em;
   color: var(--mint-700);
   background: var(--mint-100);
@@ -483,6 +483,11 @@ body:has(#mintml-errorpage[data-page=active]) .site-footer {
   color: var(--mint-700);
 }
 #mintml-errorpage [data-message] { font-family: var(--font-display); font-size: 1.4rem; }
+
+
+[data-random] > * {display: none;}
+[data-random] > .active {display: revert;}
+
 
 /* ---------- responsive ---------- */
 @media (max-width: 900px) {
