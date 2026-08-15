@@ -2,8 +2,14 @@
 // Routing/pages/templating are all handled by MinTML itself (see index.html) —
 // this file only handles things outside MinTML's job: mobile nav + copy buttons.
 import MinTML from '/mintml.js';
-const app = new MinTML({roles:['guest', 'hero0', 'hero1', 'hero2', 'hero3']});
+import GA4 from '/js/ga4.js';
+
+const app = new MinTML();
 window.app = app;
+
+// google analytics
+const ga = new GA4('G-X7DCDM1PK7');
+
 
 document.getElementById('year').textContent = new Date().getFullYear();
 
@@ -62,9 +68,5 @@ app.filter(()=>{
 
 
 function analyticsHandler(){
-  gtag('event', 'page_view', {
-      page_title: document.title,
-      page_location: location.href,
-      page_path: location.hash || '/'
-    });
+  
 }
