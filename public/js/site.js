@@ -55,3 +55,16 @@ document.querySelectorAll('.copy-btn').forEach(btn => {
     }
   });
 });
+
+app.filter(()=>{
+  analyticsHandler();
+});
+
+
+function analyticsHandler(){
+  gtag('event', 'page_view', {
+      page_title: document.title,
+      page_location: location.href,
+      page_path: location.hash || '/'
+    });
+}
