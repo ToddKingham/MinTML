@@ -28,7 +28,8 @@ export default class GA4{
             this.event('page_view', {
                 page_title: document.title,
                 page_location: location.href,
-                page_path: location.hash || '/'
+                page_path: location.hash || '/',
+                mintml_route: location.hash || '#'
             })
         });
     }
