@@ -197,6 +197,7 @@ export default class MinTML{
         $$(ACTIVE_PAGE).forEach(p=>p.dataset.page="");
         $id(this.#pageId.previous).dataset.page = "previous";
         $id(this.#pageId.active).dataset.page = "active";
+        $id(this.#pageId.active).scrollTop = 0;
     }
 
     navigate(id){
