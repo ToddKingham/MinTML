@@ -109,7 +109,7 @@ export default class MinTML{
         // ensure there is an "active" data-page
         const activePage = $(ACTIVE_PAGE);
         const errorPage = $id(this.#pageId.error);
-        const defaultPage = activePage || this.#pageId.all[0];        
+        const defaultPage = activePage || $(`#${this.#pageId.all[0]}`);        
 
         // create a 404 page if needed
         if(!errorPage){
