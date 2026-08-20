@@ -1,0 +1,25 @@
+*** Affordance *** 
+The web platform provides affordances.
+
+An HTML <form> affords submission.
+
+An <a> affords navigation.
+
+A <button> affords an action.
+
+GET affords safe retrieval.
+
+CSS affords presentation.
+
+JavaScript affords behavior.
+
+ ------
+
+ Don't fight the affordances of the platform. Build on them.
+
+ -----
+
+ MinTML is built around the principle that the web platform already provides the right tools for structure, presentation, behavior, and communication. Use each layer for what it was designed to do.
+
+
+ *** Respect the Platform! ***

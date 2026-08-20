@@ -1,9 +1,10 @@
 const CSS = `
     /* default styles for this framework */
-    html, body { margin: 0px; overflow: hidden; height: 100%;}
-    body { display: flex; flex-direction: column; }
-    body > header { flex-shrink: 0;}
-    main { flex: 1; min-height: 0; display: flex; flex-direction: column;}
+    
+    *, *::before, *::after {box-sizing: border-box; margin: 0;}
+    html, body {height: 100%;}
+    body {display: flex; flex-direction: column;}
+    body > main {flex: 1;}
     [data-page] { display: none; }
     [data-page=active] { display: block; flex: 1; overflow: auto; }
     [data-page=active]#mintml-errorpage {
@@ -62,42 +63,39 @@ export default class MinTML{
     }
 
     #initNavigation(){
-        const navigationHandler = async ({e, element, route, data})=>{
-            e.preventDefault(); 
+        const navigationHandler = async e=>{
+            const element = e.target.closest(`[data-before]`);
+            if (!element) return;
+
+            e.preventDefault();
             
-            const beforeHandler = this.#beforeListeners[element.dataset.before] || (()=>true);
-            if(e.target.closest(`${DATA_BEFORE}`)){
-                // run the "before" check
-                if(await beforeHandler(data)){
-                    if(route){
-                        this.navigate(route);
-                    }
-                }
+            let data;
+            let route;
+            
+            switch(element.tagName){
+                
+                case 'A':
+                    data = Object.assign({}, this.#beforePreflightContract, {element, params: queryStringParams(element.hash)});
+                    route = element.hash?.replace('#','');
+                    break;
+                
+                case 'FORM':
+                    data = Object.assign({}, this.#beforePreflightContract, {element, payload: form2Object(element), params: queryStringParams(element.action)});
+                    route = element.action.split('#')[1];
+                    break;
+
+                default:
+                    return;
             }
-            else {
-                if(route){
-                    this.navigate(route);
-                }
+
+            const beforeHandler = this.#beforeListeners[element.dataset.before] || (()=>true);
+            if(await beforeHandler(data)){
+                this.navigate(route);
             }
         }
         
-        document.addEventListener("click", (async e => {
-            const element = e.target.closest(`a[href^="#"]`);
-            if (!element) return;
-
-            const route = element.hash?.replace('#','');
-            const data = Object.assign({}, this.#beforePreflightContract, {element, params: queryStringParams(element.hash)});
-            await navigationHandler({e, element, route, data});
-        }).bind(this));
-
-        document.addEventListener('submit', (async e=>{
-            const element = e.target.closest(`form`);
-            if (!element) return;
-
-            const route = element.action.split('#')[1];
-            const data = Object.assign({}, this.#beforePreflightContract, {element, payload: form2Object(element), params: queryStringParams(element.action)});
-            await navigationHandler({e, element, route, data});    
-        }).bind(this));
+        document.addEventListener("click", navigationHandler.bind(this));
+        document.addEventListener('submit', navigationHandler.bind(this));
     }
 
     #initPages(){
@@ -113,7 +111,7 @@ export default class MinTML{
 
         // create a 404 page if needed
         if(!errorPage){
-            $('*:has(> section[data-page])').insertAdjacentHTML('beforeend', `<section id="mintml-errorpage" data-page></section>`);
+            $('*:has(> [data-page])').insertAdjacentHTML('beforeend', `<section id="mintml-errorpage" data-page></section>`);
         }
 
         // set the default page flag just incase it's not hardcoded
@@ -145,7 +143,7 @@ export default class MinTML{
     }
     
     async #processRoute(){
-
+        
         // initialize some variables
         let filterResult = true;
         const whatsInTheURL = location.hash.length ? location.hash.replace('#','') : this.#pageId.default;
@@ -168,7 +166,7 @@ export default class MinTML{
 
         // run the filter logic
         else{
-            filterResult = this.#routeFilter({route: nextRouteId});
+            filterResult = await this.#routeFilter({route: nextRouteId});
             
             // no return statement or return; results in success.
             if(filterResult === undefined ){
@@ -197,7 +195,9 @@ export default class MinTML{
         $$(ACTIVE_PAGE).forEach(p=>p.dataset.page="");
         $id(this.#pageId.previous).dataset.page = "previous";
         $id(this.#pageId.active).dataset.page = "active";
-        $id(this.#pageId.active).scrollTop = 0;
+        
+        // scroll back to the top of the page
+        window.scrollTo(0, 0);
     }
 
     navigate(id){
