@@ -4,7 +4,7 @@ const CSS = `
     *, *::before, *::after {box-sizing: border-box; margin: 0;}
     html, body {height: 100%;}
     body {display: flex; flex-direction: column;}
-    body > main {flex: 1;}
+    body > main {display:flex; flex-direction: column; flex: 1;}
     [data-page] { display: none; }
     [data-page=active] { display: block; flex: 1; overflow: auto; }
     [data-page=active]#mintml-errorpage {
