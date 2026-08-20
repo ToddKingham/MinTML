@@ -112,7 +112,6 @@ export default class MinTML{
             const actionHandler = this.#actionListners[element.dataset.action] || (()=>true);
             const data = Object.assign({}, this.#actionContract, {element});
             await actionHandler(data);
-            console.log('we made it!', this.#actionListners);
         });
     }
 
