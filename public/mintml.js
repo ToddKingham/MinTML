@@ -18,6 +18,7 @@ const DATA_PAGE = '[data-page]';
 const ACTIVE_PAGE = '[data-page=active]';
 const PREVIOUS_PAGE = '[data-page=previous]';
 const DATA_BEFORE = '[data-before]';
+const DATA_ACTION = 'button[data-action], input[type=button][data-action]';
 const CSS_ID = 'mintml-app-css';
 const RESONSE_CODES = {"300": "Multiple Choices","301": "Moved Permanently","302": "Found","303": "See Other","304": "Not Modified","305": "Use Proxy","307": "Temporary Redirect","308": "Permanent Redirect","400": "Bad Request","401": "Unauthorized","402": "Payment Required","403": "Forbidden","404": "Not Found","405": "Method Not Allowed","406": "Not Acceptable","407": "Proxy Authentication Required","408": "Request Timeout","409": "Conflict","410": "Gone","411": "Length Required","412": "Precondition Failed","413": "Payload Too Large","414": "URI Too Long","415": "Unsupported Media Type","416": "Range Not Satisfiable","417": "Expectation Failed","418": "I'm a teapot","421": "Misdirected Request","422": "Unprocessable Entity","423": "Locked","424": "Failed Dependency","425": "Too Early","426": "Upgrade Required","428": "Precondition Required","429": "Too Many Requests","431": "Request Header Fields Too Large","451": "Unavailable For Legal Reasons","500": "Internal Server Error","501": "Not Implemented","502": "Bad Gateway","503": "Service Unavailable","504": "Gateway Timeout","505": "HTTP Version Not Supported","506": "Variant Also Negotiates","507": "Insufficient Storage","508": "Loop Detected","510": "Not Extended","511": "Network Authentication Required"}
 const ERROR_TEMPLATE = '<span data-code>{{code}}</span> <span data-message>{{message}}</span>';
@@ -25,10 +26,14 @@ const ERROR_TEMPLATE = '<span data-code>{{code}}</span> <span data-message>{{mes
 export default class MinTML{
     #routeFilter = ()=>true;
     #beforeListeners = {};
+    #actionListners = {};
     #currentRole;
     #showRoles = {};
     #roles;
     #templates = {};
+    #actionContract = {
+        element: null
+    };
     #beforePreflightContract = {
         element: null, 
         payload: null,
@@ -49,6 +54,7 @@ export default class MinTML{
         
         this.#initCSS();
         this.#initNavigation();
+        this.#initAction();
         this.#initPages(errorPageId);
         this.#initTemplates();
     }
@@ -64,7 +70,7 @@ export default class MinTML{
 
     #initNavigation(){
         const navigationHandler = async e=>{
-            const element = e.target.closest(`[data-before]`);
+            const element = e.target.closest(DATA_BEFORE);
             if (!element) return;
 
             e.preventDefault();
@@ -96,6 +102,18 @@ export default class MinTML{
         
         document.addEventListener("click", navigationHandler.bind(this));
         document.addEventListener('submit', navigationHandler.bind(this));
+    }
+
+    #initAction(){
+        document.addEventListener('click', async (e)=>{
+            const element = e.target.closest(DATA_ACTION);
+            if(!element) return;
+
+            const actionHandler = this.#actionListners[element.dataset.action] || (()=>true);
+            const data = Object.assign({}, this.#actionContract, {element});
+            await actionHandler(data);
+            console.log('we made it!', this.#actionListners);
+        });
     }
 
     #initPages(){
@@ -208,8 +226,13 @@ export default class MinTML{
         this.#processRoute();
     }
 
-    before(query, fn){
-        this.#beforeListeners[query] = fn;
+    before(key, fn){
+        this.#beforeListeners[key] = fn;
+        return this;
+    }
+
+    action(key, fn){
+        this.#actionListners[key] = fn;
         return this;
     }
 
